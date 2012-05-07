@@ -46,16 +46,10 @@ ExternalDecayDriver::ExternalDecayDriver( const ParameterSet& pset )
       }
       else if ( curSet == "Tauola" )
       {
-         // this is for old tauola27 (+pretauola)
-	 //
-	 // --> fTauolaInterface = new gen::TauolaInterface(pset.getUntrackedParameter< ParameterSet >(curSet));
-	 //
-	 // for tauola++, here it should be something like:
-	 //
-	 fTauolaInterface = TauolaInterface::getInstance();
-	 fTauolaInterface->setPSet( pset.getUntrackedParameter< ParameterSet >(curSet) );
-	 fPhotosInterface = new gen::PhotosInterface();
-	 fPhotosInterface->avoidTauLeptonicDecays();
+         fTauolaInterface = new gen::TauolaInterface(pset.getUntrackedParameter< ParameterSet >(curSet));
+	 // in the future, here it should be something like:
+	 // fPhotosInterface = new gen::PhotosInterface();
+	 // fPhotosInterface->avoidTauLeptonicDecays();
       }
       else if ( curSet == "Photos" )
       {
@@ -90,11 +84,13 @@ HepMC::GenEvent* ExternalDecayDriver::decay( HepMC::GenEvent* evt )
       if ( !evt ) return 0;
    }
    
+
    if ( fPhotosInterface )
    {
       evt = fPhotosInterface->apply( evt );
       if ( !evt ) return 0;
    }
+
          
    return evt;
 }
@@ -143,16 +139,12 @@ void ExternalDecayDriver::init( const edm::EventSetup& es )
    {
       fSpecialSettings.push_back( "QED-brem-off:all" );
    }
-
-// this is specific to old tauola27 only, because it calls up photos automatically
-//
-//
-//   if ( fTauolaInterface )
-//   {
-//      // override !
-//      fSpecialSettings.clear();
-//      fSpecialSettings.push_back( "QED-brem-off:15" );
-//   }
+   if ( fTauolaInterface )
+   {
+      // override !
+      fSpecialSettings.clear();
+      fSpecialSettings.push_back( "QED-brem-off:15" );
+   }
    
    fIsInitialized = true;
    
