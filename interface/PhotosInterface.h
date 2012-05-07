@@ -44,6 +44,7 @@ namespace gen {
       int                      fOnlyPDG;
       std::vector<std::string> fSpecialSettings; 
       bool                     fAvoidTauLeptonicDecays;  
+      std::vector<Scaling>     fScaleFactors;
       std::vector<int>         fBarcodes;
       bool                     fIsInitialized;
       
